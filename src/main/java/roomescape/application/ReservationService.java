@@ -3,6 +3,7 @@ package roomescape.application;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import roomescape.application.dto.CreateReservationRequest;
+import roomescape.application.dto.DeleteReservationRequest;
 import roomescape.application.dto.ReservationResponse;
 import roomescape.domain.model.Reservation;
 import roomescape.infra.repository.InMemoryReservationRepository;
@@ -27,7 +28,7 @@ public class ReservationService {
     return reservationRepository.save(reservation);
   }
 
-  public void deleteById(final Long reservationId) {
-    reservationRepository.deleteById(reservationId);
+  public void deleteById(final DeleteReservationRequest deleteReservationRequest) {
+    reservationRepository.deleteById(deleteReservationRequest.reservationId());
   }
 }

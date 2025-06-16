@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import roomescape.application.dto.CreateReservationRequest;
+import roomescape.application.dto.DeleteReservationRequest;
 import roomescape.application.dto.ReservationResponse;
 import roomescape.domain.model.Reservation;
 
@@ -49,7 +50,7 @@ public class ReservationController {
 
   @DeleteMapping("/reservations/{reservationId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteReservation(@PathVariable Long reservationId) {
-    reservationService.deleteById(reservationId);
+  public void deleteReservation(@PathVariable DeleteReservationRequest deleteReservationRequest) {
+    reservationService.deleteById(deleteReservationRequest);
   }
 }
