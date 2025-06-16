@@ -7,6 +7,8 @@ public interface ReservationRepository {
 
   Long nextId();
 
+  Reservation findById(Long id);
+
   List<Reservation> findAll();
 
   Reservation save(Reservation reservation);

@@ -29,6 +29,8 @@ public class ReservationService {
   }
 
   public void deleteById(final DeleteReservationRequest deleteReservationRequest) {
-    reservationRepository.deleteById(deleteReservationRequest.reservationId());
+    final Reservation reservation = reservationRepository.findById(deleteReservationRequest.reservationId());
+
+    reservationRepository.deleteById(reservation.getId());
   }
 }

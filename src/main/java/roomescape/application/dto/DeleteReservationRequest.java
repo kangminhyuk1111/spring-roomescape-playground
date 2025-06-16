@@ -11,11 +11,11 @@ public record DeleteReservationRequest(Long reservationId) {
 
   private void validateReservationId(Long reservationId) {
     if (reservationId == null) {
-      throw new ApplicationException(CustomErrorCode.INTERNAL_SERVER_ERROR);
+      throw new ApplicationException(CustomErrorCode.RESERVATION_ID_REQUIRED);
     }
 
     if (reservationId <= 0) {
-      throw new ApplicationException(CustomErrorCode.INTERNAL_SERVER_ERROR);
+      throw new ApplicationException(CustomErrorCode.RESERVATION_ID_INVALID);
     }
   }
 }
