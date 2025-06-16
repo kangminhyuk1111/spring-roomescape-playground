@@ -8,4 +8,6 @@ public interface ReservationRepository {
   Long nextId();
 
   List<Reservation> findAll();
+
+  Reservation save(Reservation reservation);
 }

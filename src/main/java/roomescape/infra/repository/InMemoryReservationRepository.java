@@ -29,7 +29,13 @@ public class InMemoryReservationRepository implements ReservationRepository {
     return reservations;
   }
 
-  private Reservation createReservation(String name, LocalDate date, LocalTime time) {
+  @Override
+  public Reservation save(final Reservation reservation) {
+    reservations.add(reservation);
+    return reservation;
+  }
+
+  private Reservation createReservation(final String name, final LocalDate date, final LocalTime time) {
     return new Reservation(nextId(), name, date, time);
   }
 
@@ -37,5 +43,9 @@ public class InMemoryReservationRepository implements ReservationRepository {
     reservations.add(createReservation("kang", LocalDate.now(), LocalTime.now().withNano(0)));
     reservations.add(createReservation("min", LocalDate.now(), LocalTime.now().withNano(0)));
     reservations.add(createReservation("hyuk", LocalDate.now(), LocalTime.now().withNano(0)));
+  }
+
+  public void deleteById(final Long reservationId) {
+    reservations.removeIf(reservation -> reservation.getId().equals(reservationId));
   }
 }
