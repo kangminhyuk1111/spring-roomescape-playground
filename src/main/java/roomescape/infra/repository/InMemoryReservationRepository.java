@@ -1,7 +1,7 @@
 package roomescape.infra.repository;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
@@ -16,18 +16,19 @@ public class InMemoryReservationRepository implements ReservationRepository {
   private final AtomicLong idGenerator = new AtomicLong(1);
   private final List<Reservation> reservations;
 
-  public InMemoryReservationRepository(final List<Reservation> reservations) {
-    this.reservations = reservations;
+  public InMemoryReservationRepository() {
+    this.reservations = Collections.synchronizedList(new ArrayList<>());
   }
 
   @Override
-  public Long nextId() {
+  public long nextId() {
     return idGenerator.getAndIncrement();
   }
 
   @Override
   public Reservation findById(final Long id) {
-    return reservations.stream().filter(r -> r.getId().equals(id)).findFirst().orElseThrow(() -> new ApplicationException(CustomErrorCode.RESERVATION_ID_NOT_FOUND));
+    return reservations.stream().filter(r -> r.getId().equals(id)).findFirst()
+        .orElseThrow(() -> new ApplicationException(CustomErrorCode.RESERVATION_ID_NOT_FOUND));
   }
 
   @Override
@@ -41,6 +42,7 @@ public class InMemoryReservationRepository implements ReservationRepository {
     return reservation;
   }
 
+  @Override
   public void deleteById(final Long reservationId) {
     reservations.removeIf(reservation -> reservation.getId().equals(reservationId));
   }

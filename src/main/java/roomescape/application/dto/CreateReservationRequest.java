@@ -22,6 +22,10 @@ public record CreateReservationRequest(LocalDate date, String name, LocalTime ti
     if (date == null) {
       throw new ApplicationException(CustomErrorCode.RESERVATION_DATE_REQUIRED);
     }
+
+    if (date.isBefore(LocalDate.now())) {
+      throw new ApplicationException(CustomErrorCode.RESERVATION_DATE_PAST);
+    }
   }
 
   private static void validateName(String name) {

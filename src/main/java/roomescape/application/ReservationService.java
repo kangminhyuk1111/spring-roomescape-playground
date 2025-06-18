@@ -6,12 +6,13 @@ import roomescape.application.dto.CreateReservationRequest;
 import roomescape.application.dto.DeleteReservationRequest;
 import roomescape.application.dto.ReservationResponse;
 import roomescape.domain.model.Reservation;
+import roomescape.domain.repository.ReservationRepository;
 import roomescape.infra.repository.InMemoryReservationRepository;
 
 @Service
 public class ReservationService {
 
-  private final InMemoryReservationRepository reservationRepository;
+  private final ReservationRepository reservationRepository;
 
   public ReservationService(final InMemoryReservationRepository reservationRepository) {
     this.reservationRepository = reservationRepository;
