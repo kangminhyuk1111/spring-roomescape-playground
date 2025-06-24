@@ -28,7 +28,10 @@ public class ReservationRestController {
 
   @GetMapping("/reservations")
   public List<ReservationResponse> reservations() {
-    return reservationService.findAll();
+    System.out.println("=== GET /reservations 호출됨 ===");
+    List<ReservationResponse> result = reservationService.findAll();
+    System.out.println("조회된 예약 수: " + result.size());
+    return result;
   }
 
   @PostMapping("/reservations")

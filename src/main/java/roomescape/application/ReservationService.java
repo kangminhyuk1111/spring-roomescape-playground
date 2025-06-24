@@ -19,12 +19,14 @@ public class ReservationService {
   }
 
   public List<ReservationResponse> findAll() {
-    return reservationRepository.findAll().stream().map(ReservationResponse::from).toList();
+    System.out.println("=== ReservationService.findAll() 호출됨 ===");
+    List<Reservation> reservations = reservationRepository.findAll();
+    System.out.println("Repository에서 조회된 예약 수: " + reservations.size());
+    return reservations.stream().map(ReservationResponse::from).toList();
   }
 
   public Reservation save(final CreateReservationRequest createReservationRequest) {
-    final Long id = reservationRepository.nextId();
-    final Reservation reservation = createReservationRequest.toReservation(id);
+    final Reservation reservation = createReservationRequest.toReservation();
 
     return reservationRepository.save(reservation);
   }

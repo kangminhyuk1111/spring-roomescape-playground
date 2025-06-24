@@ -21,11 +21,6 @@ public class InMemoryReservationRepository implements ReservationRepository {
   }
 
   @Override
-  public long nextId() {
-    return idGenerator.getAndIncrement();
-  }
-
-  @Override
   public Reservation findById(final Long id) {
     return reservations.stream().filter(r -> r.getId().equals(id)).findFirst()
         .orElseThrow(() -> new ApplicationException(CustomErrorCode.RESERVATION_ID_NOT_FOUND));
@@ -33,12 +28,22 @@ public class InMemoryReservationRepository implements ReservationRepository {
 
   @Override
   public List<Reservation> findAll() {
-    return reservations;
+    System.out.println("=== InMemoryReservationRepository.findAll() 호출됨 ===");
+    System.out.println("InMemory 저장소 크기: " + reservations.size());
+    return new ArrayList<>(reservations);
   }
 
   @Override
   public Reservation save(final Reservation reservation) {
+    if (reservation.getId() == null) {
+      Long id = idGenerator.getAndIncrement();
+      Reservation newReservation = new Reservation(id, reservation.getName(), reservation.getDate(), reservation.getTime());
+      reservations.add(newReservation);
+      return newReservation;
+    }
+
     reservations.add(reservation);
+
     return reservation;
   }
 

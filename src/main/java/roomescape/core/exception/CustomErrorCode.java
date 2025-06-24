@@ -12,8 +12,11 @@ public enum CustomErrorCode {
   RESERVATION_NAME_EMPTY(400, "예약자 이름은 공백일 수 없습니다."),
   RESERVATION_TIME_REQUIRED(400, "예약 시간은 필수입니다."),
   RESERVATION_DATE_PAST(404, "예약 날짜는 과거가 될 수 없습니다."),
+  RESERVATION_DATE_INVALID_FORMAT(400, "예약 날짜 포맷이 올바르지 않습니다."),
+  RESERVATION_TIME_INVALID_FORMAT(400, "예약 날짜 포맷이 올바르지 않습니다."),
 
-  INTERNAL_SERVER_ERROR(500, "서버 오류 입니다.");
+  INTERNAL_SERVER_ERROR(500, "서버 오류 입니다."),
+  INVALID_REQUEST_FORMAT(400, "JSON 변환 실패");
 
   private final int status;
   private final String message;

@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class MissionStepTest {
     void 삼단계() {
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
-        params.put("date", "2023-08-05");
+        params.put("date", "2025-09-25");
         params.put("time", "15:40");
 
         RestAssured.given().log().all()
@@ -95,7 +96,7 @@ public class MissionStepTest {
         RestAssured.given().log().all()
             .when().delete("/reservations/1")
             .then().log().all()
-            .statusCode(400);
+            .statusCode(404);
     }
 
     @Test
@@ -107,5 +108,28 @@ public class MissionStepTest {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void 육단계() {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "브라운");
+        params.put("date", "2025-09-25");
+        params.put("time", "15:40");
+
+        RestAssured.given()
+            .contentType(ContentType.JSON)
+            .body(params)
+            .post("/reservations");
+
+        List<Map<String, Object>> reservations = RestAssured.given().log().all()
+            .when().get("/reservations")
+            .then().log().all()
+            .statusCode(200).extract()
+            .jsonPath().getList(".");
+
+        assertThat(reservations.size()).isEqualTo(1);
+        assertThat(reservations.get(0).get("name")).isEqualTo("브라운");
+        assertThat(reservations.get(0).get("date")).isEqualTo("2025-09-25");
     }
 }
