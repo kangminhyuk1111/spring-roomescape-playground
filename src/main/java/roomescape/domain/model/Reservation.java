@@ -11,10 +11,10 @@ public class Reservation {
   private LocalTime time;
 
   public Reservation() {
-
   }
 
-  public Reservation(final Long id, final String userName, final LocalDate date, final LocalTime time) {
+  public Reservation(final Long id, final String userName, final LocalDate date,
+      final LocalTime time) {
     this.id = id;
     this.name = userName;
     this.date = date;

@@ -28,14 +28,13 @@ public class ReservationRestController {
 
   @GetMapping("/reservations")
   public List<ReservationResponse> reservations() {
-    System.out.println("=== GET /reservations 호출됨 ===");
-    List<ReservationResponse> result = reservationService.findAll();
-    System.out.println("조회된 예약 수: " + result.size());
-    return result;
+    return reservationService.findAll();
   }
 
   @PostMapping("/reservations")
   public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest request) {
+    System.out.println("Create Reservation");
+
     Reservation savedReservation = reservationService.save(request);
     ReservationResponse response = ReservationResponse.from(savedReservation);
 
@@ -47,6 +46,8 @@ public class ReservationRestController {
   @DeleteMapping("/reservations/{reservationId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteReservation(@PathVariable Long reservationId) {
+    System.out.println("Delete Reservation");
+
     final DeleteReservationRequest request = new DeleteReservationRequest(reservationId);
     reservationService.deleteById(request);
   }

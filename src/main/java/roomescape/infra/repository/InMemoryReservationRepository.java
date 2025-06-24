@@ -28,8 +28,6 @@ public class InMemoryReservationRepository implements ReservationRepository {
 
   @Override
   public List<Reservation> findAll() {
-    System.out.println("=== InMemoryReservationRepository.findAll() 호출됨 ===");
-    System.out.println("InMemory 저장소 크기: " + reservations.size());
     return new ArrayList<>(reservations);
   }
 

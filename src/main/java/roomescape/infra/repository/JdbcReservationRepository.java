@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,6 +14,7 @@ import roomescape.domain.model.Reservation;
 import roomescape.domain.repository.ReservationRepository;
 
 @Repository
+@Primary
 public class JdbcReservationRepository implements ReservationRepository {
 
   private final JdbcTemplate jdbcTemplate;
@@ -30,10 +32,10 @@ public class JdbcReservationRepository implements ReservationRepository {
 
   @Override
   public List<Reservation> findAll() {
-    System.out.println("=== JdbcReservationRepository.findAll() 호출됨 ===");
     String sql = "SELECT id, name, date, time FROM reservation ORDER BY id";
+
     List<Reservation> result = jdbcTemplate.query(sql, new ReservationRowMapper());
-    System.out.println("JDBC에서 조회된 예약 수: " + result.size());
+
     return result;
   }
 
