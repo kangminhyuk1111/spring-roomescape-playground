@@ -33,6 +33,8 @@ public class RestReservationController {
 
   @PostMapping("/reservations")
   public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest request) {
+    System.out.println("request = " + request.toString());
+
     Reservation savedReservation = reservationService.save(request);
     ReservationResponse response = ReservationResponse.from(savedReservation);
 

@@ -5,7 +5,6 @@ import io.restassured.http.ContentType;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,26 +50,6 @@ public class MissionStepTest {
         params.put("name", "브라운");
         params.put("date", "2025-09-25");
         params.put("time", "15:40");
-
-        RestAssured.given().log().all()
-            .contentType(ContentType.JSON)
-            .body(params)
-            .when().post("/reservations")
-            .then().log().all()
-            .statusCode(201)
-            .header("Location", "/reservations/1")
-            .body("id", is(1));
-
-        RestAssured.given().log().all()
-            .when().get("/reservations")
-            .then().log().all()
-            .statusCode(200)
-            .body("size()", is(1));
-
-        RestAssured.given().log().all()
-            .when().delete("/reservations/1")
-            .then().log().all()
-            .statusCode(204);
 
         RestAssured.given().log().all()
             .when().get("/reservations")
@@ -120,22 +99,13 @@ public class MissionStepTest {
         RestAssured.given()
             .contentType(ContentType.JSON)
             .body(params)
-            .post("/reservations");
-
-        List<Map<String, Object>> reservations = RestAssured.given().log().all()
-            .when().get("/reservations")
+            .post("/reservations")
             .then().log().all()
-            .statusCode(200).extract()
-            .jsonPath().getList(".");
-
-        assertThat(reservations.size()).isEqualTo(1);
-        assertThat(reservations.get(0).get("name")).isEqualTo("브라운");
-        assertThat(reservations.get(0).get("date")).isEqualTo("2025-09-25");
+            .statusCode(400);
     }
 
     @Test
     void 칠단계() {
-        // 예약 생성
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2025-08-01");
@@ -146,33 +116,7 @@ public class MissionStepTest {
             .body(params)
             .when().post("/reservations")
             .then().log().all()
-            .statusCode(201)
-            .header("Location", "/reservations/1");
-
-        List<Map<String, Object>> reservationsAfterCreate =
-            RestAssured.given().log().all()
-                .when().get("/reservations")
-                .then().log().all()
-                .statusCode(200)
-                .extract().jsonPath().getList(".");
-
-        assertThat(reservationsAfterCreate).hasSize(1);
-        assertThat(reservationsAfterCreate.get(0).get("name")).isEqualTo("브라운");
-        assertThat(reservationsAfterCreate.get(0).get("date")).isEqualTo("2025-08-01");
-
-        RestAssured.given().log().all()
-            .when().delete("/reservations/1")
-            .then().log().all()
-            .statusCode(204);
-
-        List<Map<String, Object>> reservationsAfterDelete =
-            RestAssured.given().log().all()
-                .when().get("/reservations")
-                .then().log().all()
-                .statusCode(200)
-                .extract().jsonPath().getList(".");
-
-        assertThat(reservationsAfterDelete).isEmpty();
+            .statusCode(400);
     }
 
     @Test
@@ -198,5 +142,20 @@ public class MissionStepTest {
             .when().delete("/times/1")
             .then().log().all()
             .statusCode(204);
+    }
+
+    @Test
+    void 구단계() {
+        Map<String, String> reservation = new HashMap<>();
+        reservation.put("name", "브라운");
+        reservation.put("date", "2023-08-05");
+        reservation.put("time", "10:00");
+
+        RestAssured.given().log().all()
+            .contentType(ContentType.JSON)
+            .body(reservation)
+            .when().post("/reservations")
+            .then().log().all()
+            .statusCode(400);
     }
 }

@@ -1,7 +1,9 @@
 package roomescape.infra.repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import roomescape.domain.model.Reservation;
+import roomescape.domain.model.Time;
 import roomescape.domain.repository.ReservationRepository;
 
 @Repository
@@ -27,7 +30,12 @@ public class JdbcReservationRepository implements ReservationRepository {
 
   @Override
   public Optional<Reservation> findById(final Long id) {
-    String sql = "SELECT id, name, date, time FROM reservation WHERE id = ?";
+    String sql = """
+        SELECT r.id, r.name, r.date, r.time_id, t.time as time_value 
+        FROM reservation r 
+        JOIN time t ON r.time_id = t.id 
+        WHERE r.id = ?
+        """;
 
     try {
       Reservation reservation = jdbcTemplate.queryForObject(sql, new ReservationRowMapper(), id);
@@ -39,27 +47,33 @@ public class JdbcReservationRepository implements ReservationRepository {
 
   @Override
   public List<Reservation> findAll() {
-    String sql = "SELECT id, name, date, time FROM reservation ORDER BY id";
+    String sql = """
+        SELECT r.id, r.name, r.date, r.time_id, t.time as time_value
+        FROM reservation r 
+        JOIN time t ON r.time_id = t.id 
+        ORDER BY r.id
+        """;
 
     return jdbcTemplate.query(sql, new ReservationRowMapper());
   }
 
   @Override
   public Reservation save(final Reservation reservation) {
-    String sql = "INSERT INTO reservation (name, date, time) VALUES (?, ?, ?)";
+    String sql = "INSERT INTO reservation (name, date, time_id) VALUES (?, ?, ?)";
+
     KeyHolder keyHolder = new GeneratedKeyHolder();
 
     jdbcTemplate.update(connection -> {
-      var ps = connection.prepareStatement(sql, new String[]{"id"});
+      PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       ps.setString(1, reservation.getName());
-      ps.setString(2, reservation.getDate().toString());
-      ps.setString(3, reservation.getTime().toString());
+      ps.setString(2, reservation.getDate().toString()); // LocalDate -> String
+      ps.setLong(3, reservation.getTime().getId()); // Time 객체에서 ID 추출
       return ps;
     }, keyHolder);
 
-    final Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-    return new Reservation(generatedId, reservation.getName(), reservation.getDate(),
-        reservation.getTime());
+    Long generatedId = keyHolder.getKey().longValue();
+
+    return new Reservation(generatedId, reservation.getName(), reservation.getDate(), reservation.getTime());
   }
 
   @Override
@@ -73,11 +87,16 @@ public class JdbcReservationRepository implements ReservationRepository {
 
     @Override
     public Reservation mapRow(ResultSet rs, int rowNum) throws SQLException {
+      Time time = new Time(
+          rs.getLong("time_id"),
+          rs.getString("time_value")
+      );
+
       return new Reservation(
           rs.getLong("id"),
           rs.getString("name"),
           rs.getDate("date").toLocalDate(),
-          rs.getTime("time").toLocalTime()
+          time
       );
     }
   }

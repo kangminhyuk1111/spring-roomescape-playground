@@ -8,15 +8,20 @@ import roomescape.application.dto.ReservationResponse;
 import roomescape.core.exception.ApplicationException;
 import roomescape.core.exception.CustomErrorCode;
 import roomescape.domain.model.Reservation;
+import roomescape.domain.model.Time;
 import roomescape.domain.repository.ReservationRepository;
+import roomescape.domain.repository.TimeRepository;
 
 @Service
 public class ReservationService {
 
   private final ReservationRepository reservationRepository;
+  private final TimeRepository timeRepository;
 
-  public ReservationService(final ReservationRepository reservationRepository) {
+  public ReservationService(final ReservationRepository reservationRepository,
+      final TimeRepository timeRepository) {
     this.reservationRepository = reservationRepository;
+    this.timeRepository = timeRepository;
   }
 
   public List<ReservationResponse> findAll() {
@@ -24,7 +29,10 @@ public class ReservationService {
   }
 
   public Reservation save(final CreateReservationRequest createReservationRequest) {
-    final Reservation reservation = createReservationRequest.to();
+    final Time time = timeRepository.findById(createReservationRequest.time())
+        .orElseThrow(() -> new ApplicationException(CustomErrorCode.TIME_NOT_FOUND));
+
+    final Reservation reservation = createReservationRequest.to(time);
 
     return reservationRepository.save(reservation);
   }

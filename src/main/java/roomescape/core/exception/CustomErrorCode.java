@@ -6,12 +6,13 @@ public enum CustomErrorCode {
   RESERVATION_ID_INVALID(400, "예약 ID는 양수여야 합니다."),
 
   RESERVATION_ID_NOT_FOUND(404, "존재하지 않는 예약 정보입니다."),
-  TIME_ID_NOT_FOUND(404, "존재하지 않는 시간 정보입니다."),
+  TIME_NOT_FOUND(404, "존재하지 않는 시간 정보입니다."),
 
   RESERVATION_DATE_REQUIRED(400, "예약 날짜는 필수입니다."),
   RESERVATION_NAME_REQUIRED(400, "예약자 이름은 필수입니다."),
   RESERVATION_NAME_EMPTY(400, "예약자 이름은 공백일 수 없습니다."),
   RESERVATION_TIME_REQUIRED(400, "예약 시간은 필수입니다."),
+  RESERVATION_TIME_NOT_NEGATIVE(400, "예약 시간은 음수일 수 없습니다."),
   RESERVATION_DATE_PAST(404, "예약 날짜는 과거가 될 수 없습니다."),
   RESERVATION_DATE_INVALID_FORMAT(400, "예약 날짜 포맷이 올바르지 않습니다."),
   RESERVATION_TIME_INVALID_FORMAT(400, "예약 날짜 포맷이 올바르지 않습니다."),

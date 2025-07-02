@@ -33,7 +33,7 @@ public class TimeService {
 
   public void deleteById(final DeleteTimeRequest request) {
     final Time time = timeRepository.findById(request.id())
-        .orElseThrow(() -> new ApplicationException(CustomErrorCode.TIME_ID_NOT_FOUND));
+        .orElseThrow(() -> new ApplicationException(CustomErrorCode.TIME_NOT_FOUND));
 
     timeRepository.deleteById(time.getId());
   }
