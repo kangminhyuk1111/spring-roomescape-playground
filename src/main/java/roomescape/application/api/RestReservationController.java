@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import roomescape.application.ReservationService;
+import roomescape.application.service.ReservationService;
 import roomescape.application.dto.CreateReservationRequest;
 import roomescape.application.dto.DeleteReservationRequest;
 import roomescape.application.dto.ReservationResponse;
 import roomescape.domain.model.Reservation;
 
 @RestController
-public class ReservationRestController {
+public class RestReservationController {
 
   private final ReservationService reservationService;
 
-  public ReservationRestController(final ReservationService reservationService) {
+  public RestReservationController(final ReservationService reservationService) {
     this.reservationService = reservationService;
   }
 
@@ -33,8 +33,6 @@ public class ReservationRestController {
 
   @PostMapping("/reservations")
   public ResponseEntity<ReservationResponse> createReservation(@RequestBody CreateReservationRequest request) {
-    System.out.println("Create Reservation");
-
     Reservation savedReservation = reservationService.save(request);
     ReservationResponse response = ReservationResponse.from(savedReservation);
 
@@ -46,8 +44,6 @@ public class ReservationRestController {
   @DeleteMapping("/reservations/{reservationId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteReservation(@PathVariable Long reservationId) {
-    System.out.println("Delete Reservation");
-
     final DeleteReservationRequest request = new DeleteReservationRequest(reservationId);
     reservationService.deleteById(request);
   }

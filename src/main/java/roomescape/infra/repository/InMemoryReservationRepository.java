@@ -3,10 +3,9 @@ package roomescape.infra.repository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Repository;
-import roomescape.core.exception.ApplicationException;
-import roomescape.core.exception.CustomErrorCode;
 import roomescape.domain.model.Reservation;
 import roomescape.domain.repository.ReservationRepository;
 
@@ -21,9 +20,8 @@ public class InMemoryReservationRepository implements ReservationRepository {
   }
 
   @Override
-  public Reservation findById(final Long id) {
-    return reservations.stream().filter(r -> r.getId().equals(id)).findFirst()
-        .orElseThrow(() -> new ApplicationException(CustomErrorCode.RESERVATION_ID_NOT_FOUND));
+  public Optional<Reservation> findById(final Long id) {
+    return reservations.stream().filter(reservation -> reservation.getId().equals(id)).findFirst();
   }
 
   @Override

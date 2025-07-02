@@ -66,7 +66,7 @@ public record CreateReservationRequest(String date, String name, String time) {
     }
   }
 
-  public Reservation toReservation() {
+  public Reservation to() {
     return new Reservation(name, LocalDate.parse(date), LocalTime.parse(time));
   }
 }

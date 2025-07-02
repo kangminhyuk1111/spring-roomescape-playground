@@ -1,20 +1,21 @@
-package roomescape.application;
+package roomescape.application.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
 import roomescape.application.dto.CreateReservationRequest;
 import roomescape.application.dto.DeleteReservationRequest;
 import roomescape.application.dto.ReservationResponse;
+import roomescape.core.exception.ApplicationException;
+import roomescape.core.exception.CustomErrorCode;
 import roomescape.domain.model.Reservation;
 import roomescape.domain.repository.ReservationRepository;
-import roomescape.infra.repository.InMemoryReservationRepository;
 
 @Service
 public class ReservationService {
 
   private final ReservationRepository reservationRepository;
 
-  public ReservationService(final InMemoryReservationRepository reservationRepository) {
+  public ReservationService(final ReservationRepository reservationRepository) {
     this.reservationRepository = reservationRepository;
   }
 
@@ -23,13 +24,14 @@ public class ReservationService {
   }
 
   public Reservation save(final CreateReservationRequest createReservationRequest) {
-    final Reservation reservation = createReservationRequest.toReservation();
+    final Reservation reservation = createReservationRequest.to();
 
     return reservationRepository.save(reservation);
   }
 
-  public void deleteById(final DeleteReservationRequest deleteReservationRequest) {
-    final Reservation reservation = reservationRepository.findById(deleteReservationRequest.reservationId());
+  public void deleteById(final DeleteReservationRequest request) {
+    final Reservation reservation = reservationRepository.findById(request.reservationId())
+        .orElseThrow(() -> new ApplicationException(CustomErrorCode.RESERVATION_ID_NOT_FOUND));
 
     reservationRepository.deleteById(reservation.getId());
   }

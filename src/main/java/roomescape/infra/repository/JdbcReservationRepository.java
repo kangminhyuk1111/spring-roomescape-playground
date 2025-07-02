@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -24,19 +26,22 @@ public class JdbcReservationRepository implements ReservationRepository {
   }
 
   @Override
-  public Reservation findById(final Long id) {
+  public Optional<Reservation> findById(final Long id) {
     String sql = "SELECT id, name, date, time FROM reservation WHERE id = ?";
 
-    return jdbcTemplate.queryForObject(sql, new ReservationRowMapper(), id);
+    try {
+      Reservation reservation = jdbcTemplate.queryForObject(sql, new ReservationRowMapper(), id);
+      return Optional.ofNullable(reservation);
+    } catch (EmptyResultDataAccessException e) {
+      return Optional.empty();
+    }
   }
 
   @Override
   public List<Reservation> findAll() {
     String sql = "SELECT id, name, date, time FROM reservation ORDER BY id";
 
-    List<Reservation> result = jdbcTemplate.query(sql, new ReservationRowMapper());
-
-    return result;
+    return jdbcTemplate.query(sql, new ReservationRowMapper());
   }
 
   @Override
@@ -53,7 +58,8 @@ public class JdbcReservationRepository implements ReservationRepository {
     }, keyHolder);
 
     final Long generatedId = Objects.requireNonNull(keyHolder.getKey()).longValue();
-    return new Reservation(generatedId, reservation.getName(), reservation.getDate(), reservation.getTime());
+    return new Reservation(generatedId, reservation.getName(), reservation.getDate(),
+        reservation.getTime());
   }
 
   @Override
@@ -64,6 +70,7 @@ public class JdbcReservationRepository implements ReservationRepository {
   }
 
   private static class ReservationRowMapper implements RowMapper<Reservation> {
+
     @Override
     public Reservation mapRow(ResultSet rs, int rowNum) throws SQLException {
       return new Reservation(
