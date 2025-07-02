@@ -135,6 +135,7 @@ public class MissionStepTest {
 
     @Test
     void 칠단계() {
+        // 예약 생성
         Map<String, String> params = new HashMap<>();
         params.put("name", "브라운");
         params.put("date", "2025-08-01");
@@ -148,15 +149,29 @@ public class MissionStepTest {
             .statusCode(201)
             .header("Location", "/reservations/1");
 
-        Integer count = jdbcTemplate.queryForObject("SELECT count(1) from reservation", Integer.class);
-        assertThat(count).isEqualTo(1);
+        List<Map<String, Object>> reservationsAfterCreate =
+            RestAssured.given().log().all()
+                .when().get("/reservations")
+                .then().log().all()
+                .statusCode(200)
+                .extract().jsonPath().getList(".");
+
+        assertThat(reservationsAfterCreate).hasSize(1);
+        assertThat(reservationsAfterCreate.get(0).get("name")).isEqualTo("브라운");
+        assertThat(reservationsAfterCreate.get(0).get("date")).isEqualTo("2025-08-01");
 
         RestAssured.given().log().all()
             .when().delete("/reservations/1")
             .then().log().all()
             .statusCode(204);
 
-        Integer countAfterDelete = jdbcTemplate.queryForObject("SELECT count(1) from reservation", Integer.class);
-        assertThat(countAfterDelete).isEqualTo(0);
+        List<Map<String, Object>> reservationsAfterDelete =
+            RestAssured.given().log().all()
+                .when().get("/reservations")
+                .then().log().all()
+                .statusCode(200)
+                .extract().jsonPath().getList(".");
+
+        assertThat(reservationsAfterDelete).isEmpty();
     }
 }
